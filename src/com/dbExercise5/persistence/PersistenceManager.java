@@ -1,17 +1,28 @@
 package com.dbExercise5.persistence;
 
 import java.util.Hashtable;
+import java.util.Iterator;
+
+import com.dbExercise5.util.SynchronisedCounter;
 
 public class PersistenceManager {
     
-    private static final PersistenceManager pm;
-    private static Hashtable buffer;
+    private static final PersistenceManager PM;
+    
+    private static final String DB_FOLDER = "D:\\Mega\\UHH\\Databases\\Exercises\\Exercise 5\\data";
+    private static final String LOG_FOLDER = "D:\\Mega\\UHH\\Databases\\Exercises\\Exercise 5\\log";
+    
+    private static Hashtable<Integer, String> pageBuffer;
+    private static Hashtable<Integer, Transaction> transactions;
+//    private static Hashtable<Integer, LogEntry> logBuffer;
+    private static SynchronisedCounter taidGenerator;
+    private static SynchronisedCounter lsnGenerator;
     
     static
     {
 	try
 	{
-	    pm = new PersistenceManager();
+	    PM = new PersistenceManager();
 	}
 	catch (Throwable e)
 	{
@@ -21,30 +32,86 @@ public class PersistenceManager {
     
     private PersistenceManager()
     {
-	buffer = new Hashtable();
+	pageBuffer = new Hashtable<Integer, String>();
+	taidGenerator = new SynchronisedCounter();
+	lsnGenerator = new SynchronisedCounter();
     }
     
     public static PersistenceManager getInstance()
     {
-	return pm;
+	return PM;
     }
     
     public int beginTransaction()
     {
-	// TODO
-	return 0;
+	taidGenerator.increment();
+	Transaction ta = new Transaction(taidGenerator.value());
+	transactions.put(ta.getTaid(), ta);
+	return ta.getTaid();
     }
     
-    public boolean commit(int taid)
+    public void commit(int taid)
     {
-	// TODO
-	return false;
+	Transaction ta = transactions.get(taid);
+	
+	// Iterate through the pages modified by the transaction
+	Iterator<Integer> pageIterator = ta.getPages().iterator();
+	
+	while (pageIterator.hasNext())
+	{
+	    int page = pageIterator.next();
+	    
+	    // Flush log data for all pages in the transaction
+	    lsnGenerator.increment();
+	    flushLog(lsnGenerator.value(), taid, page, pageBuffer.get(page));
+	}
+	
+	ta.setCommitted(true);
     }
     
-    public boolean write(int taid, int pageid, String data)
+    public void write(int taid, int pageid, String data)
     {
-	// TODO
-	return false;
+	pageBuffer.put(pageid, data);
+	
+	if (pageBuffer.size() > 5)
+	{
+	    flushPageBuffer();
+	}
     }
     
+    private void flushLog(int lsn, int taid, int pageid, String data)
+    {
+	// TODO: write log to disk
+    }
+    
+    private void flushPageBuffer()
+    {
+	// Iterate through committed transactions
+	Iterator<Transaction> taIterator = transactions.values().iterator();
+	
+	while (taIterator.hasNext())
+	{
+	    Transaction ta = taIterator.next();
+	    
+	    if (!ta.isCommitted()) {continue;}
+	    
+	    // Iterate through pages for the committed transaction
+	    Iterator<Integer> pageIterator = ta.getPages().iterator();
+	    
+	    while (pageIterator.hasNext())
+	    {
+		// TODO
+		// Flush the log for this page
+		// Flush the page to disk
+		// Remove the page from the buffer
+	    }
+	    
+	    // Remove the transaction from the set?
+	}
+    }
+    
+    private void flushPage(int pageid)
+    {
+	// TODO: write page with given page ID to disk
+    }
 }
