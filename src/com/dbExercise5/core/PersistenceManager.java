@@ -4,6 +4,8 @@ import java.util.Hashtable;
 import java.util.Iterator;
 
 import com.dbExercise5.util.SynchronisedCounter;
+import com.dbExercise5.logging.LogEntry;
+import com.dbExercise5.util.FileUtilities;
 
 public class PersistenceManager {
     
@@ -77,11 +79,16 @@ public class PersistenceManager {
 	{
 	    flushPageBuffer();
 	}
+	
+	Transaction ta = transactions.get(taid);
+	ta.addPage(pageid);
     }
     
     private void flushLog(int lsn, int taid, int pageid, String data)
     {
-	// TODO: write log to disk
+    	// TODO: write log to disk
+    	LogEntry logEntry = new LogEntry(lsn, taid, pageid, data);
+    	FileUtilities.writeLogEntryToFile(logEntry);
     }
     
     private void flushPageBuffer()
