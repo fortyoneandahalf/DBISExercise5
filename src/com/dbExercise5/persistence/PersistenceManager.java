@@ -9,8 +9,8 @@ public class PersistenceManager {
     
     private static final PersistenceManager PM;
     
-    private static final String DB_FOLDER = "D:\\Mega\\UHH\\Databases\\Exercises\\Exercise 5\\data";
-    private static final String LOG_FOLDER = "D:\\Mega\\UHH\\Databases\\Exercises\\Exercise 5\\log";
+    private static final String DB_FOLDER = "data";
+    private static final String LOG_FOLDER = "log";
     
     private static Hashtable<Integer, String> pageBuffer = new Hashtable<Integer, String>();
     private static Hashtable<Integer, Transaction> transactions = new Hashtable<Integer, Transaction>();
