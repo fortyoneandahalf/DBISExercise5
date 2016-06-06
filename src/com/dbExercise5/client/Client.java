@@ -7,15 +7,18 @@ import com.dbExercise5.util.SynchronisedCounter;
 
 public class Client extends Thread
 {
-    private SynchronisedCounter idGenerator;
     private PersistenceManager pm;
+    
+    private SynchronisedCounter idGenerator;
     private int clientid;
     private int currentTransaction;
     
-    public Client()
+    public Client(int clid)
     {
-	idGenerator.increment();
-	clientid = idGenerator.value();
+//	idGenerator.increment();
+//	clientid = idGenerator.value();
+	
+	this.clientid = clid;
     }
 
     public int getClientid() {
@@ -36,6 +39,8 @@ public class Client extends Thread
     
     public void run()
     {
+	pm = PersistenceManager.getInstance();
+	
 	currentTransaction = pm.beginTransaction();
 	
 	for (int i = 0; i < 5; i++)

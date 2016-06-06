@@ -1,12 +1,13 @@
 package com.dbExercise5.persistence;
 
+import java.util.HashSet;
 import java.util.Set;
 
 public class Transaction
 {
     private int taid;
     private boolean committed;
-    private Set<Integer> pages;
+    private Set<Integer> pages = new HashSet<Integer>();
 
     public Transaction(int taid) {
 	super();

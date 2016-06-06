@@ -12,8 +12,8 @@ public class PersistenceManager {
     private static final String DB_FOLDER = "D:\\Mega\\UHH\\Databases\\Exercises\\Exercise 5\\data";
     private static final String LOG_FOLDER = "D:\\Mega\\UHH\\Databases\\Exercises\\Exercise 5\\log";
     
-    private static Hashtable<Integer, String> pageBuffer;
-    private static Hashtable<Integer, Transaction> transactions;
+    private static Hashtable<Integer, String> pageBuffer = new Hashtable<Integer, String>();
+    private static Hashtable<Integer, Transaction> transactions = new Hashtable<Integer, Transaction>();
 //    private static Hashtable<Integer, LogEntry> logBuffer;
     private static SynchronisedCounter taidGenerator;
     private static SynchronisedCounter lsnGenerator;
