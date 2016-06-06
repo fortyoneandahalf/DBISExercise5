@@ -2,7 +2,7 @@ package com.dbExercise5.client;
 
 import java.util.UUID;
 
-import com.dbExercise5.persistence.PersistenceManager;
+import com.dbExercise5.core.PersistenceManager;
 import com.dbExercise5.util.SynchronisedCounter;
 
 public class Client extends Thread

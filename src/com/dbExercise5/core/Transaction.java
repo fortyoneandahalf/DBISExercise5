@@ -1,4 +1,4 @@
-package com.dbExercise5.persistence;
+package com.dbExercise5.core;
 
 import java.util.HashSet;
 import java.util.Set;

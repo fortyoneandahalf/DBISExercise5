@@ -1,7 +1,7 @@
 package com.dbExercise5.application;
 
 import com.dbExercise5.client.Client;
-import com.dbExercise5.persistence.PersistenceManager;
+import com.dbExercise5.core.PersistenceManager;
 import com.dbExercise5.util.SynchronisedCounter;
 
 public class Main {
