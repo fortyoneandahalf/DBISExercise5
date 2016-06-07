@@ -48,7 +48,7 @@ public class Client extends Thread
     	    pm.write(currentTransaction, clientid * 10 + i, UUID.randomUUID().toString());
     	    try
     	    {
-    		Thread.sleep(1000);
+    		Thread.sleep(100);
     	    }
     	    catch (InterruptedException e)
     	    {

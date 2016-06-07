@@ -23,23 +23,32 @@ public class Main {
     	
     	// Start the clients running
     	c1.start();
+    	sleep(1000);
+    	
     	c2.start();
+    	sleep(1000);
+    	
     	c3.start();
+    	sleep(1000);
     	
     	// Pause for a while and let the threads run
+    	sleep(10000);
+    	
+    	// Stop clients
+//    	c1.interrupt();
+//    	c2.interrupt();
+//    	c3.interrupt();
+    }
+    
+    private static void sleep(int duration)
+    {
     	try
     	{
-    	    Thread.sleep(10000);
+    	    Thread.sleep(duration);
     	}
     	catch (InterruptedException e)
     	{
     	    System.err.println("InterruptedException: " + e.getMessage());
     	}
-    	
-    	// Stop clients
-    	c1.interrupt();
-    	c2.interrupt();
-    	c3.interrupt();
     }
-
 }
