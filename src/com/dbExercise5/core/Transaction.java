@@ -10,41 +10,41 @@ public class Transaction
     private Set<Integer> pages = new HashSet<Integer>();
 
     public Transaction(int taid) {
-	super();
-	this.setTaid(taid);
+    	super();
+    	this.setTaid(taid);
     }
 
     public int getTaid() {
-	return taid;
+    	return taid;
     }
 
     public void setTaid(int taid) {
-	this.taid = taid;
+    	this.taid = taid;
     }
 
     public boolean isCommitted() {
-	return committed;
+    	return committed;
     }
 
     public void setCommitted(boolean committed) {
-	this.committed = committed;
+    	this.committed = committed;
     }
 
     public Set<Integer> getPages() {
-	return pages;
+    	return pages;
     }
 
     public void setPages(Set<Integer> pages) {
-	this.pages = pages;
+    	this.pages = pages;
     }
     
     public void addPage(int page)
     {
-	if (pages.contains(page))
-	{
-	    pages.remove(page);
-	}
-	
-	pages.add(page);
+    	if (pages.contains(page))
+    	{
+    	    pages.remove(page);
+    	}
+    	
+    	pages.add(page);
     }
 }

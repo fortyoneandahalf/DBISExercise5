@@ -15,47 +15,55 @@ public class Client extends Thread
     
     public Client(int clid)
     {
-//	idGenerator.increment();
-//	clientid = idGenerator.value();
-	
-	this.clientid = clid;
+//    	idGenerator.increment();
+//    	clientid = idGenerator.value();
+    	
+    	this.clientid = clid;
     }
 
     public int getClientid() {
-	return clientid;
+    	return clientid;
     }
 
     public void setClientid(int clientid) {
-	this.clientid = clientid;
+    	this.clientid = clientid;
     }
 
     public int getCurrentTransaction() {
-	return currentTransaction;
+    	return currentTransaction;
     }
 
     public void setCurrentTransaction(int currentTransaction) {
-	this.currentTransaction = currentTransaction;
+    	this.currentTransaction = currentTransaction;
     }
     
     public void run()
     {
-	pm = PersistenceManager.getInstance();
-	
-	currentTransaction = pm.beginTransaction();
-	
-	for (int i = 0; i < 7; i++)
-	{	
-	    pm.write(currentTransaction, clientid * 10 + i, UUID.randomUUID().toString());
-	    try
-	    {
-		Thread.sleep(100);
-	    }
-	    catch (InterruptedException e)
-	    {
-		
-	    }
-	}
-	
-	pm.commit(currentTransaction);
+    	pm = PersistenceManager.getInstance();
+    	
+    	currentTransaction = pm.beginTransaction();
+    	
+    	for (int i = 0; i < 7; i++)
+    	{	
+    	    pm.write(currentTransaction, clientid * 10 + i, UUID.randomUUID().toString());
+    	    try
+    	    {
+    		Thread.sleep(1000);
+    	    }
+    	    catch (InterruptedException e)
+    	    {
+    		
+    	    }
+    	}
+    	
+    	pm.commit(currentTransaction);
+    	try
+    	{
+    	    Thread.sleep(1000);
+    	}
+    	catch (InterruptedException e)
+    	{
+    	    
+    	}
     }
 }
