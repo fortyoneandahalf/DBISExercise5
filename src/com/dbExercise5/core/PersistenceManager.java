@@ -11,7 +11,7 @@ public class PersistenceManager {
     
     private static final PersistenceManager PM;
     
-    private static Hashtable<Integer, String> pageBuffer = new Hashtable<Integer, String>();
+    private static Hashtable<Integer, Page> pageBuffer = new Hashtable<Integer, Page>();
     private static Hashtable<Integer, Transaction> transactions = new Hashtable<Integer, Transaction>();
     private static SynchronisedCounter taidGenerator;
     private static SynchronisedCounter lsnGenerator;
@@ -30,7 +30,7 @@ public class PersistenceManager {
     
     private PersistenceManager()
     {
-    	pageBuffer = new Hashtable<Integer, String>();
+    	pageBuffer = new Hashtable<Integer, Page>();
     	taidGenerator = new SynchronisedCounter();
     	lsnGenerator = new SynchronisedCounter();
     }
@@ -65,9 +65,12 @@ public class PersistenceManager {
     
     public void write(int taid, int pageid, String data)
     {
-    	pageBuffer.put(pageid, data);
     	lsnGenerator.increment();
-    	flushLog(lsnGenerator.value(), "WRITE", taid, pageid, data);
+    	int lsn = lsnGenerator.value();
+    	
+    	pageBuffer.put(pageid, new Page(pageid, lsn, data));
+    	
+    	flushLog(lsn, "WRITE", taid, pageid, data);
     	
     	Transaction ta = transactions.get(taid);
     	ta.addPage(pageid);
@@ -116,7 +119,7 @@ public class PersistenceManager {
     private void flushPage(int pageid)
     {
     	lsnGenerator.increment();
-    	Page page = new Page(pageid, lsnGenerator.value(), pageBuffer.get(pageid));
-    	FileUtilities.writePageToFile(page);
+    	//Page page = new Page(pageid, lsnGenerator.value(), pageBuffer.get(pageid));
+    	FileUtilities.writePageToFile(pageBuffer.get(pageid));
     }
 }
