@@ -110,7 +110,7 @@ public class PersistenceManager {
 		// TODO
 		// Flush the log for this page
 		// Flush the page to disk
-		// Remove the page from the buffer
+		// Remove the page from the buffer	    	
 	    }
 	    
 	    // Remove the transaction from the set?
@@ -119,6 +119,6 @@ public class PersistenceManager {
     
     private void flushPage(int pageid)
     {
-	// TODO: write page with given page ID to disk
+    	// TODO: write page with given page ID to disk
     }
 }
