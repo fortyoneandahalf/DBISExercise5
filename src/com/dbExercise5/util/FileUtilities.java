@@ -6,6 +6,8 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 
 import com.dbExercise5.core.Page;
 import com.dbExercise5.logging.LogEntry;
@@ -37,7 +39,7 @@ public class FileUtilities {
 		LogEntry le = null;
 		String leStr = FileUtilities.readFromFile(FileUtilities.LOG_FOLDER+logEntryFileName+".txt");
 		String[] leStrArr = leStr.split(",");
-		le = new LogEntry(Integer.parseInt(leStrArr[0]), Integer.parseInt(leStrArr[1]), Integer.parseInt(leStrArr[2]), leStrArr[3]);
+		le = new LogEntry(Integer.parseInt(leStrArr[0]), leStrArr[1], Integer.parseInt(leStrArr[2]), Integer.parseInt(leStrArr[3]), leStrArr[4]);
 		return le;
 	}
 	
@@ -48,6 +50,27 @@ public class FileUtilities {
 		String[] pStrArr = pStr.split(",");
 		p = new Page(Integer.parseInt(pStrArr[0]), Integer.parseInt(pStrArr[1]), pStrArr[2]);
 		return p;
+	}
+	
+	public static LinkedHashSet<LogEntry> readAllLogsFromFile()
+	{
+	    LinkedHashSet<LogEntry> logs = new LinkedHashSet<LogEntry> ();
+	    
+	    int i = 1;
+	    LogEntry le;
+	    
+	    do
+	    {
+		le = readLogEntryFromFile(i);
+		
+		if (le != null)
+		{
+		    logs.add(le);
+		}
+	    }
+	    while (le != null);
+	    
+	    return logs;
 	}
 	
 	public static void writeToFile(String pathname, String data)

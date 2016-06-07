@@ -2,15 +2,16 @@ package com.dbExercise5.logging;
 
 public class LogEntry
 {
-    
     private int lsn;
+    private String logType;
     private int taid;
     private int pageid;
     private String data;
     
-    public LogEntry(int lsn, int taid, int pageid, String data) {
+    public LogEntry(int lsn, String logType, int taid, int pageid, String data) {
 	super();
 	this.lsn = lsn;
+	this.logType = logType;
 	this.taid = taid;
 	this.pageid = pageid;
 	this.data = data;
@@ -23,6 +24,14 @@ public class LogEntry
 	this.lsn = lsn;
     }
     
+    public String getLogType() {
+	return logType;
+    }
+
+    public void setLogType(String logType) {
+	this.logType = logType;
+    }
+
     public int getTaid() {
 	return taid;
     }
