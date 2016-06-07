@@ -55,7 +55,7 @@ public class LogEntry
     
     @Override
     public String toString() {
-	return lsn + "," + taid + "," + pageid + "," + data;
+	return lsn + "," + logType + "," + taid + "," + pageid + "," + data;
     }
     
 }

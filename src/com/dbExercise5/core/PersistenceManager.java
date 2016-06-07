@@ -34,91 +34,95 @@ public class PersistenceManager {
     
     private PersistenceManager()
     {
-	pageBuffer = new Hashtable<Integer, String>();
-	taidGenerator = new SynchronisedCounter();
-	lsnGenerator = new SynchronisedCounter();
+		pageBuffer = new Hashtable<Integer, String>();
+		taidGenerator = new SynchronisedCounter();
+		lsnGenerator = new SynchronisedCounter();
     }
     
     public static PersistenceManager getInstance()
     {
-	return PM;
+    	return PM;
     }
     
     public int beginTransaction()
     {
-	taidGenerator.increment();
-	Transaction ta = new Transaction(taidGenerator.value());
-	transactions.put(ta.getTaid(), ta);
-	return ta.getTaid();
+    	taidGenerator.increment();
+    	Transaction ta = new Transaction(taidGenerator.value());
+    	
+    	lsnGenerator.increment();
+	    flushLog(lsnGenerator.value(), "BOT", ta.getTaid(), 0, "");
+	    
+		transactions.put(ta.getTaid(), ta);
+		
+		return ta.getTaid();
     }
     
     public void commit(int taid)
     {
-	Transaction ta = transactions.get(taid);
-	
-	// Iterate through the pages modified by the transaction
-	Iterator<Integer> pageIterator = ta.getPages().iterator();
-	
-	while (pageIterator.hasNext())
-	{
-	    int page = pageIterator.next();
-	    
-	    // Flush log data for all pages in the transaction
+		Transaction ta = transactions.get(taid);
+		
 	    lsnGenerator.increment();
-	    flushLog(lsnGenerator.value(), taid, page, pageBuffer.get(page));
-	}
-	
-	ta.setCommitted(true);
+	    flushLog(lsnGenerator.value(), "COMMIT", taid, 0, "");
+		
+		ta.setCommitted(true);
     }
     
     public void write(int taid, int pageid, String data)
     {
-	pageBuffer.put(pageid, data);
-	
-	if (pageBuffer.size() > 5)
-	{
-	    flushPageBuffer();
-	}
-	
-	Transaction ta = transactions.get(taid);
-	ta.addPage(pageid);
+		pageBuffer.put(pageid, data);
+		lsnGenerator.increment();
+		flushLog(lsnGenerator.value(), "WRITE", taid, pageid, data);
+		
+		Transaction ta = transactions.get(taid);
+		ta.addPage(pageid);
+		
+		if (pageBuffer.size() > 5)
+		{
+		    flushPageBuffer();
+		}
     }
     
-    private void flushLog(int lsn, int taid, int pageid, String data)
+    private void flushLog(int lsn, String logType, int taid, int pageid, String data)
     {
     	// TODO: write log to disk
-    	LogEntry logEntry = new LogEntry(lsn, taid, pageid, data);
+    	LogEntry logEntry = new LogEntry(lsn, logType, taid, pageid, data);
     	FileUtilities.writeLogEntryToFile(logEntry);
     }
     
     private void flushPageBuffer()
     {
-	// Iterate through committed transactions
-	Iterator<Transaction> taIterator = transactions.values().iterator();
-	
-	while (taIterator.hasNext())
-	{
-	    Transaction ta = taIterator.next();
-	    
-	    if (!ta.isCommitted()) {continue;}
-	    
-	    // Iterate through pages for the committed transaction
-	    Iterator<Integer> pageIterator = ta.getPages().iterator();
-	    
-	    while (pageIterator.hasNext())
-	    {
-		// TODO
-		// Flush the log for this page
-		// Flush the page to disk
-		// Remove the page from the buffer	    	
-	    }
-	    
-	    // Remove the transaction from the set?
-	}
+		// Iterate through committed transactions
+		Iterator<Transaction> taIterator = transactions.values().iterator();
+		
+		while (taIterator.hasNext())
+		{
+		    Transaction ta = taIterator.next();
+		    
+		    if (!ta.isCommitted()) {continue;}
+		    
+		    // Iterate through pages for the committed transaction
+		    Iterator<Integer> pageIterator = ta.getPages().iterator();
+		    
+		    while (pageIterator.hasNext())
+		    {
+				// TODO
+				// Flush the page to disk
+				// Remove the page from the buffer	
+		    	int pageid = pageIterator.next();
+		    	flushPage(pageid);
+		    	pageBuffer.remove(pageid);
+		    }
+		    
+		    // Remove the transaction from the set?
+		    transactions.remove(ta.getTaid());
+		}
     }
     
     private void flushPage(int pageid)
     {
     	// TODO: write page with given page ID to disk
+    	lsnGenerator.increment();
+    	Page page = new Page(pageid, lsnGenerator.value(), pageBuffer.get(pageid));
+    	FileUtilities.writePageToFile(page);
     }
 }
