@@ -23,13 +23,13 @@ public class Main {
 	
 	// Start the clients running
 	c1.start();
-//	c2.start();
-//	c3.start();
+	c2.start();
+	c3.start();
 	
 	// Pause for a while and let the threads run
 	try
 	{
-	    Thread.sleep(10000);
+	    Thread.sleep(5000);
 	}
 	catch (InterruptedException e)
 	{
