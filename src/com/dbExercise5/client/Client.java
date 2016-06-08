@@ -1,5 +1,6 @@
 package com.dbExercise5.client;
 
+import java.util.Random;
 import java.util.UUID;
 
 import com.dbExercise5.core.PersistenceManager;
@@ -41,29 +42,36 @@ public class Client extends Thread
     {
     	pm = PersistenceManager.getInstance();
     	
-    	currentTransaction = pm.beginTransaction();
+    	Random rng = new Random();
     	
-    	for (int i = 0; i < 7; i++)
-    	{	
-    	    pm.write(currentTransaction, clientid * 10 + i, UUID.randomUUID().toString());
-    	    try
-    	    {
-    		Thread.sleep(100);
-    	    }
-    	    catch (InterruptedException e)
-    	    {
-    		
-    	    }
-    	}
-    	
-    	pm.commit(currentTransaction);
-    	try
+    	for (int j = 0; j < rng.nextInt(20); j++)
     	{
-    	    Thread.sleep(1000);
-    	}
-    	catch (InterruptedException e)
-    	{
-    	    
+    		currentTransaction = pm.beginTransaction();
+        	
+        	for (int i = 0; i < rng.nextInt(20); i++)
+        	{	
+        	    pm.write(currentTransaction, clientid * 10 + rng.nextInt(9), UUID.randomUUID().toString());
+        	    try
+        	    {
+        	    	Thread.sleep(rng.nextInt(500));
+        	    }
+        	    catch (InterruptedException e)
+        	    {
+        		
+        	    }
+        	}
+        	
+        	pm.commit(currentTransaction);
+        	currentTransaction = 0;
+        	
+        	try
+        	{
+        		Thread.sleep(rng.nextInt(500));
+        	}
+        	catch (InterruptedException e)
+        	{
+        	    
+        	}
     	}
     }
 }
