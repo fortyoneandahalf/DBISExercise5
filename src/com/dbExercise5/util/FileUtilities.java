@@ -17,7 +17,7 @@ public class FileUtilities {
 	public static final String DATA_FOLDER = "data/";
 	public static final String LOG_FOLDER = "log/";
 	
-	public static String readFromFile(String pathname)
+	public static String readFromFile(String pathname) throws FileNotFoundException
 	{
 		String data = "";
 		try {
@@ -25,9 +25,12 @@ public class FileUtilities {
 			BufferedReader br = new BufferedReader(fr);
 			data = br.readLine();
 			br.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+		}
+		catch (FileNotFoundException e) {
+			//e.printStackTrace();
+			throw e;
+		}
+		catch (IOException e) {
 			e.printStackTrace();
 		}
 		
@@ -37,7 +40,17 @@ public class FileUtilities {
 	public static LogEntry readLogEntryFromFile(int lsn){
 		String logEntryFileName = String.valueOf(lsn);
 		LogEntry le = null;
-		String leStr = FileUtilities.readFromFile(FileUtilities.LOG_FOLDER+logEntryFileName+".txt");
+		String leStr;
+		
+		try
+		{
+			leStr = FileUtilities.readFromFile(FileUtilities.LOG_FOLDER+logEntryFileName+".txt");
+		}
+		catch(FileNotFoundException e)
+		{
+			return null;
+		}
+		
 		String[] leStrArr = leStr.split(",");
 		le = new LogEntry(Integer.parseInt(leStrArr[0]), leStrArr[1], Integer.parseInt(leStrArr[2]), Integer.parseInt(leStrArr[3]), leStrArr[4]);
 		return le;
@@ -46,7 +59,17 @@ public class FileUtilities {
 	public static Page readPageFromFile(int pageid){
 		String PageFileName = String.valueOf(pageid);
 		Page p = null;
-		String pStr = FileUtilities.readFromFile(FileUtilities.DATA_FOLDER+PageFileName+".txt");
+		String pStr;
+		
+		try
+		{
+			pStr= FileUtilities.readFromFile(FileUtilities.DATA_FOLDER+PageFileName+".txt");
+		}
+		catch(FileNotFoundException e)
+		{
+			return null;
+		}
+		
 		String[] pStrArr = pStr.split(",");
 		p = new Page(Integer.parseInt(pStrArr[0]), Integer.parseInt(pStrArr[1]), pStrArr[2]);
 		return p;
@@ -61,12 +84,13 @@ public class FileUtilities {
 	    
 	    do
 	    {
-		le = readLogEntryFromFile(i);
-		
-		if (le != null)
-		{
-		    logs.add(le);
-		}
+    		le = readLogEntryFromFile(i);
+    		
+    		if (le != null)
+    		{
+    		    logs.add(le);
+    		    i++;
+    		}
 	    }
 	    while (le != null);
 	    
