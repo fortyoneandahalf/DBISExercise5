@@ -76,9 +76,9 @@ public class PersistenceManager {
     	ta.addPage(pageid);
     	
     	if (pageBuffer.size() > 5)
-    	{
-    	    flushPageBuffer();
-    	}
+        {
+    		flushPageBuffer();
+        }
     }
     
     private void flushLog(int lsn, String logType, int taid, int pageid, String data)
@@ -103,23 +103,26 @@ public class PersistenceManager {
     	    
     	    while (pageIterator.hasNext())
     	    {
-    		// Flush the page to disk
-    		int pageid = pageIterator.next();
-    		flushPage(pageid);
-    		
-    		// Remove the page from the buffer
-    		pageBuffer.remove(pageid);
+        		// Flush the page to disk
+        		int pageid = pageIterator.next();
+        		
+        		// TODO This null check is because of cross-threading issues where two threads
+        		// try to flush the buffer simultaneously; the first one works, but the
+        		// second generates an NPE because the page it's trying to flush has already
+        		// been removed from the buffer. Seems a bit hacky but I can't figure out
+        		// the synchronisation any better. Suspect it's the access to/modification of
+        		// the transactions list that needs fixing.
+        		if (pageBuffer.get(pageid) != null)
+        		{
+        			FileUtilities.writePageToFile(pageBuffer.get(pageid));
+        		}
+        		
+        		// Remove the page from the buffer
+        		pageBuffer.remove(pageid);
     	    }
     	    
     	    // Remove the transaction from the set of active transactions
-    	    transactions.remove(ta.getTaid());
+    	    taIterator.remove();
     	}
-    }
-    
-    private void flushPage(int pageid)
-    {
-    	lsnGenerator.increment();
-    	//Page page = new Page(pageid, lsnGenerator.value(), pageBuffer.get(pageid));
-    	FileUtilities.writePageToFile(pageBuffer.get(pageid));
     }
 }
