@@ -59,7 +59,7 @@ public class LogEntry
     	// If data is blank, make toString output a single space instead of an empty
     	// string. Ensures compatibility with read methods in FileUtilities.
     	String tempData = " ";
-    	if (!tempData.equals("")) {tempData = data;}
+    	if (!data.equals("")) {tempData = data;}
     	
     	return lsn + "," + logType + "," + taid + "," + pageid + "," + tempData;
     }
